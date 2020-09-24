@@ -21,6 +21,7 @@ class Playarea(QtWidgets.QFrame):
     refreshmapsignal = QtCore.pyqtSignal()
     isGame = True
     rowcount = 0
+    level=0
 
     def __init__(self,*args,**kwargs): #
         super(Playarea,self).__init__(*args,**kwargs) #this fucking thing has to be here for some reason 
@@ -197,17 +198,17 @@ class Playarea(QtWidgets.QFrame):
 
         i = len(self.playistaken)-1
         rowcounter = 0
-        
-        while i>0:
+
+        while i>=0:
             isTaken = True
-            for j in range(len(self.playistaken[i])):
+            for j in range(self.gridx):
                 if self.playistaken[i][j] == False:
                     isTaken = False
 
             if isTaken:
                 rowcounter+=1
 
-                for j in range(self.gridx):
+                for j in range(len(self.playistaken[i])):
                     self.playistaken[i][j] = False
                 
                 for j in reversed(range(i)):
@@ -217,17 +218,17 @@ class Playarea(QtWidgets.QFrame):
       
             i-=1
             
-        if rowcounter>0:
+        if rowcounter>0:           
             scorelist = {
-                1: 100,
-                2: 500,
-                3: 1000,
-                4: 4000
+                1: 40*(self.level+1),
+                2: 100*(self.level+1),
+                3: 300*(self.level+1),
+                4: 1200*(self.level+1)
             }
             self.score+=scorelist[rowcounter]
             self.pointsgotsignal.emit()
+            
                             
-    
     def paintEvent(self, e):
         painter = QtGui.QPainter(self)
         
