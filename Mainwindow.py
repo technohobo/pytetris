@@ -23,9 +23,11 @@ class Mainwindow(QtWidgets.QMainWindow):
         quitaction.triggered.connect(self.quitapp)
 
         self.scorelabel = self.findChild(QtWidgets.QLabel, "scorelabel")
+        self.levellabel = self.findChild(QtWidgets.QLabel, "levellabel")
 
         self.playarea = self.findChild(QtWidgets.QFrame, "playArea")
         self.playarea.pointsgotsignal.connect(self.updateScore)
+        self.playarea.advancelevelsignal.connect(self.updateLevel)
 
         self.show()
 
@@ -41,6 +43,9 @@ class Mainwindow(QtWidgets.QMainWindow):
 
     def updateScore(self):
         self.scorelabel.setText(str(self.playarea.score))
+    
+    def updateLevel(self):
+        self.levellabel.setText(str(self.playarea.level))
         
     def newGame(self, action):
         self.playarea.newgame()

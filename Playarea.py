@@ -19,8 +19,9 @@ class Playarea(QtWidgets.QFrame):
     score = 0
     pointsgotsignal = QtCore.pyqtSignal()
     refreshmapsignal = QtCore.pyqtSignal()
+    advancelevelsignal = QtCore.pyqtSignal()
     isGame = True
-    rowcount = 0
+    lines = 0
     level=0
 
     def __init__(self,*args,**kwargs): #
@@ -215,8 +216,14 @@ class Playarea(QtWidgets.QFrame):
                     for k in range(self.gridx):
                         self.playistaken[j+1][k] = self.playistaken[j][k]
                         self.playistaken[j][k] = False
+
+                self.lines+=1
       
             i-=1
+        
+        if self.lines == self.level * 10 + 10:
+            self.level+=1
+            self.advancelevelsignal.emit()
             
         if rowcounter>0:           
             scorelist = {
