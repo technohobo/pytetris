@@ -20,9 +20,10 @@ class Playarea(QtWidgets.QFrame):
     pointsgotsignal = QtCore.pyqtSignal()
     refreshmapsignal = QtCore.pyqtSignal()
     advancelevelsignal = QtCore.pyqtSignal()
-    isGame = True
+    isGame = False
     lines = 0
-    level = 4
+    level = 0
+    piece = None
 
     def __init__(self,*args,**kwargs): #
         super(Playarea,self).__init__(*args,**kwargs) #this fucking thing has to be here for some reason 
@@ -40,22 +41,24 @@ class Playarea(QtWidgets.QFrame):
                 temp.append(False)
             self.playistaken.append(temp)
         
-        self.piece = ActivePiece(piecerngtable[random.randrange(0,6)],self.gridx)
-
         self.movedownthread = MoveDownThread(self)
-        self.movedownthread.time = 1.0-self.level*0.1
         self.movedownthread.start()
 
         self.refreshmapsignal.connect(self.repaint)
     
 
-    def newgame(self):
+    def newgame(self, level=0):
         for i in range(self.gridy):
             for j in range(self.gridx):
                 self.playistaken[i][j] = False
 
         self.piece = ActivePiece(piecerngtable[random.randrange(0,6)],self.gridx)
         self.score = 0
+        self.level=level
+
+        self.movedownthread.time = 1.0-self.level*0.05
+
+        self.isGame = True
 
         self.refreshmapsignal.emit()
         self.pointsgotsignal.emit()
@@ -139,6 +142,7 @@ class Playarea(QtWidgets.QFrame):
                 for j in range(2):
                     self.piece.firststep[i][j]*=-1
                     self.piece.laststep[i][j]*=-1
+                    
         self.refreshmapsignal.emit()
         return 0
 
@@ -224,7 +228,7 @@ class Playarea(QtWidgets.QFrame):
         
         if self.lines == self.level * 10 + 10:
             self.level+=1
-            self.movedownthread.time = 1.0-self.level*0.1
+            self.movedownthread.time = 1.0-self.level*0.5
             self.advancelevelsignal.emit()
             
         if rowcounter>0:           
@@ -256,10 +260,11 @@ class Playarea(QtWidgets.QFrame):
 
                 color = QtCore.Qt.blue
 
-                for k in range(len(self.piece.data)):
-                    if self.piece.data[k][0] == j and self.piece.data[k][1] == i:
-                        color= QtCore.Qt.yellow
-                        break
+                if self.piece:
+                    for k in range(len(self.piece.data)):
+                        if self.piece.data[k][0] == j and self.piece.data[k][1] == i:
+                            color= QtCore.Qt.yellow
+                            break
                 
                 if self.playistaken[i][j] == True:
                     color = QtCore.Qt.red

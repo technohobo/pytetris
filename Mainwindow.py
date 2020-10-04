@@ -2,6 +2,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui, uic
 from Playarea import Playarea
 import sys
 from PyQt5.QtCore import Qt
+from functools import partial
 
 
 class Mainwindow(QtWidgets.QMainWindow):
@@ -12,23 +13,29 @@ class Mainwindow(QtWidgets.QMainWindow):
 
         self.setWindowTitle("pytetris")
 
+        self.playarea = self.findChild(QtWidgets.QFrame, "playArea")
+        self.playarea.pointsgotsignal.connect(self.updateScore)
+        self.playarea.advancelevelsignal.connect(self.updateLevel)
+
         self.label = self.findChild(QtWidgets.QLabel, "label")
         
-        newaction = self.findChild(QtWidgets.QAction, "actionNew")
-        newaction.setShortcut("Ctrl+N")
-        newaction.triggered.connect(self.newGame)
+        newmenu = self.findChild(QtWidgets.QMenu, "menuNew")
 
+        self.newactions = []
+
+        for i in range(20):
+            action = QtWidgets.QAction("Level "+str(i))
+            action.triggered.connect(partial(self.playarea.newgame,i))
+            self.newactions.append(action)
+            newmenu.addAction(self.newactions[i])
+        
         quitaction = self.findChild(QtWidgets.QAction, "actionQuit")
         quitaction.setShortcut("Ctrl+Q")
         quitaction.triggered.connect(self.quitapp)
 
         self.scorelabel = self.findChild(QtWidgets.QLabel, "scorelabel")
         self.levellabel = self.findChild(QtWidgets.QLabel, "levellabel")
-
-        self.playarea = self.findChild(QtWidgets.QFrame, "playArea")
-        self.playarea.pointsgotsignal.connect(self.updateScore)
-        self.playarea.advancelevelsignal.connect(self.updateLevel)
-
+        
         self.show()
 
     def keyPressEvent(self, event):
@@ -45,7 +52,7 @@ class Mainwindow(QtWidgets.QMainWindow):
     
     def keyReleaseEvent(self, event):
         if event.key() == Qt.Key_Down:
-            self.playarea.movedownthread.time = 1.0-self.playarea.level*0.1
+            self.playarea.movedownthread.time = 1.0-self.playarea.level*0.05
 
     def updateScore(self):
         self.scorelabel.setText(str(self.playarea.score))
