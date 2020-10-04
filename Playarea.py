@@ -22,7 +22,7 @@ class Playarea(QtWidgets.QFrame):
     advancelevelsignal = QtCore.pyqtSignal()
     isGame = True
     lines = 0
-    level=0
+    level = 4
 
     def __init__(self,*args,**kwargs): #
         super(Playarea,self).__init__(*args,**kwargs) #this fucking thing has to be here for some reason 
@@ -43,6 +43,7 @@ class Playarea(QtWidgets.QFrame):
         self.piece = ActivePiece(piecerngtable[random.randrange(0,6)],self.gridx)
 
         self.movedownthread = MoveDownThread(self)
+        self.movedownthread.time = 1.0-self.level*0.1
         self.movedownthread.start()
 
         self.refreshmapsignal.connect(self.repaint)
@@ -223,6 +224,7 @@ class Playarea(QtWidgets.QFrame):
         
         if self.lines == self.level * 10 + 10:
             self.level+=1
+            self.movedownthread.time = 1.0-self.level*0.1
             self.advancelevelsignal.emit()
             
         if rowcounter>0:           

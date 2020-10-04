@@ -4,7 +4,7 @@ from time import sleep
 
 class MoveDownThread(QtCore.QThread):
     isGame = True
-    def __init__(self, Playarea, time=0.2):
+    def __init__(self, Playarea, time=1):
         super(MoveDownThread,self).__init__()
         self.playarea = Playarea
         self.time = time
