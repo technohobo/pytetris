@@ -40,6 +40,12 @@ class Mainwindow(QtWidgets.QMainWindow):
             self.playarea.rotpiece()
         elif event.key() == Qt.Key_Space:
             self.playarea.isGame = not self.playarea.isGame
+        elif event.key() == Qt.Key_Down:
+            self.playarea.movedownthread.time = 0.1
+    
+    def keyReleaseEvent(self, event):
+        if event.key() == Qt.Key_Down:
+            self.playarea.movedownthread.time = 1.0-self.playarea.level*0.1
 
     def updateScore(self):
         self.scorelabel.setText(str(self.playarea.score))
