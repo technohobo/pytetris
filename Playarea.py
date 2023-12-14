@@ -2,7 +2,7 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 from ActivePiece import ActivePiece
 from MoveDownThread import MoveDownThread
 import random
-
+import math
 
 piecerngtable = {
         0: "T",
@@ -269,7 +269,7 @@ class Playarea(QtWidgets.QFrame):
                 if self.playistaken[i][j] == True:
                     color = QtCore.Qt.red
                 
-                rect = QtCore.QRect(x, y, (sizex-((rectx+1)*self.margin))/rectx, (sizey-((recty+1)*self.margin))/recty)
+                rect = QtCore.QRect(round(x), round(y), round(sizex-((rectx+1)*self.margin)/rectx), round(sizey-((recty+1)*self.margin)/recty))
                 painter.fillRect(rect,color)
 
                 x+=(sizex-self.margin/2)/rectx
